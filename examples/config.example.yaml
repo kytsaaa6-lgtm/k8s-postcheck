@@ -1,0 +1,29 @@
+# k8s-postcheck 설정 예시
+# --config ./my-cluster.yaml 로 사용합니다.
+
+# 클러스터 검증 컨텍스트 (모두 선택)
+cluster:
+  expected_nodes: 6              # 기대 노드 수 (미달 시 ERROR)
+  minio_url: http://minio.example.com:9000  # MinIO health 체크용 URL
+  velero_namespace: velero       # Velero 네임스페이스 (기본값: velero)
+
+  # Helm 릴리스 검색 네임스페이스 목록
+  helm_namespaces:
+    - default
+    - kube-system
+    - monitoring
+    - velero
+
+  # 반드시 deployed 상태여야 하는 Helm 릴리스 이름
+  expected_releases:
+    - cilium
+    - metrics-server
+    - velero
+    - my-app
+
+# system_pods 체크에서 확인할 추가 컴포넌트
+# 형식: {컴포넌트 이름: label selector}
+required_components:
+  cilium: k8s-app=cilium
+  cilium-operator: name=cilium-operator
+  # kube-proxy: k8s-app=kube-proxy  # Cilium kube-proxy replacement 사용 시 제외
