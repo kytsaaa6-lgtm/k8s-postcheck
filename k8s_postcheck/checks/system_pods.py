@@ -93,13 +93,14 @@ def _check_component(
 def _labels_match(labels: dict, selector: str) -> bool:
     for part in selector.split(","):
         part = part.strip()
-        if "=" in part:
-            k, v = part.split("=", 1)
-            if labels.get(k) != v:
-                return False
-        elif "!=" in part:
+        # "!=" 는 "=" 를 포함하므로 반드시 먼저 검사해야 한다.
+        if "!=" in part:
             k, v = part.split("!=", 1)
-            if labels.get(k) == v:
+            if labels.get(k.strip()) == v.strip():
+                return False
+        elif "=" in part:
+            k, v = part.split("=", 1)
+            if labels.get(k.strip()) != v.strip():
                 return False
     return True
 

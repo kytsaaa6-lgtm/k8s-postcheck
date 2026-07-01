@@ -7,7 +7,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from k8s_postcheck.auth import K8sHandle
-from k8s_postcheck.models import Severity
 
 
 @pytest.fixture()

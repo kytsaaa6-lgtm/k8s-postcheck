@@ -7,8 +7,8 @@
 
 from __future__ import annotations
 
-import urllib.request
 import urllib.error
+import urllib.request
 
 from ..auth import K8sHandle
 from ..models import CheckResult, Finding, Severity
@@ -145,7 +145,7 @@ def run(handle: K8sHandle, ctx: dict) -> CheckResult:
                             check="velero",
                             severity=Severity.INFO,
                             title=f"BackupStorageLocation 정상: {name}",
-                            detail=f"phase=Available",
+                            detail="phase=Available",
                         )
                     )
                 else:

@@ -16,8 +16,6 @@ import ssl
 import urllib.parse
 from datetime import datetime, timezone
 
-from kubernetes import client as k8s_client
-
 from ..auth import K8sHandle
 from ..models import CheckResult, Finding, Severity
 from ._util import timed
@@ -44,8 +42,8 @@ def _check_tls_cert(host: str, port: int, timeout: float = 10.0) -> tuple[dateti
             __import__("socket").create_connection((host, port), timeout=timeout),
             server_hostname=host,
         ) as sock:
-            cert = sock.getpeercert()
-            not_after_str = cert.get("notAfter", "")
+            cert = sock.getpeercert() or {}
+            not_after_str = str(cert.get("notAfter", ""))
             if not_after_str:
                 not_after = datetime.strptime(not_after_str, "%b %d %H:%M:%S %Y %Z")
                 not_after = not_after.replace(tzinfo=timezone.utc)
@@ -110,7 +108,7 @@ def _check_secret_certs(
                     detail=f"만료까지 {days}일 (만료일: {not_after.date()})",
                     resource=f"{namespace}/{name}",
                     suggestion=(
-                        f"`kubeadm certs renew all` 또는 Kubespray 의 "
+                        "`kubeadm certs renew all` 또는 Kubespray 의 "
                         "`--tags certs` 로 인증서를 갱신하세요."
                     ),
                 )

@@ -99,8 +99,13 @@ k8s-postcheck list-checks
 
 ```bash
 pip install -e ".[dev]"
-ruff check .
-pytest -ra
+ruff check .        # 린트
+mypy                # 타입 체크 (k8s_postcheck 패키지)
+pytest -ra          # 유닛 테스트
 ```
 
-테스트는 실제 클러스터 없이 Mock 으로 실행됩니다.
+테스트는 실제 클러스터 없이 Kubernetes API 를 Mock 으로 대체해 실행됩니다.
+6개 체크 모듈(`nodes`, `system_pods`, `helm_releases`, `certs`, `velero`,
+`etcd`)과 report/CLI 헬퍼를 회귀로 고정합니다. GitHub Actions
+(`.github/workflows/ci.yml`) 에서 ruff / mypy / pytest 를 `python 3.10/3.11/3.12`
+매트릭스로 게이팅합니다.
